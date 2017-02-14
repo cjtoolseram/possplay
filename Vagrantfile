@@ -1,4 +1,4 @@
-$logger = Log4r::Logger.new('vagrantfile')
+  $logger = Log4r::Logger.new('vagrantfile')
 def read_ip_address(machine)
   command = "LANG=en ifconfig enp0s9| grep 'inet' | cut -d: -f2 | awk '{ print $2 }'"
   result  = ""
@@ -84,6 +84,7 @@ Vagrant.configure(2) do |config|
     admin.hostmanager.aliases = %w(admin)
     admin.vm.hostname = "admin.testsky.vm"
     admin.vm.box = "puppetlabs/centos-6.6-64-nocm"
+    admin.vm.provision "shell", path: "install_agent.sh"
     admin.vm.provider "virtualbox" do |vb|
       vb.memory = "2048"
     end
@@ -107,21 +108,22 @@ Vagrant.configure(2) do |config|
     end
   end
 
-  config.vm.define "base" do |base|
-    base.hostmanager.aliases = %w(base)
-    base.vm.hostname = "base.testsky.vm"
-    base.vm.provision "shell", path: "install_agent.sh"
-    base.vm.provider "virtualbox" do |vb|
-      vb.memory = "4096"
+  config.vm.define "lb" do |lb|
+    lb.hostmanager.aliases = %w(lb)
+    lb.vm.hostname = "lb.testsky.vm"
+    lb.vm.provision "shell", path: "install_agent.sh"
+    lb.vm.provider "virtualbox" do |vb|
+      vb.memory = "2048"
     end
   end
 
-   config.vm.define "base6" do |base6|
-    base6.hostmanager.aliases = %w(base6)
-    base6.vm.hostname = "base6.testsky.vm"
-    base6.vm.box = "puppetlabs/centos-6.6-64-nocm"
-    base6.vm.provider "virtualbox" do |vb|
-      vb.memory = "1024"
+
+  config.vm.define "lb2" do |lb2|
+    lb2.hostmanager.aliases = %w(lb2)
+    lb2.vm.hostname = "lb2.testsky.vm"
+    lb2.vm.provision "shell", path: "install_agent.sh"
+    lb2.vm.provider "virtualbox" do |vb|
+      vb.memory = "2048"
     end
   end
 
@@ -131,15 +133,6 @@ Vagrant.configure(2) do |config|
     sbc.vm.box = "puppetlabs/centos-6.6-64-nocm"
     sbc.vm.provider "virtualbox" do |vb|
       vb.memory = "2048"
-    end
-  end
-
-  config.vm.define "connie" do |connie|
-    connie.hostmanager.aliases = %w(connie)
-    connie.vm.hostname = "connie.testsky.vm"
-    connie.vm.provision "shell", path: "install_agent.sh"
-    connie.vm.provider "virtualbox" do |vb|
-      vb.memory = "6144"
     end
   end
 
